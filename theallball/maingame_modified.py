@@ -1,4 +1,5 @@
 import pygame
+import os
 from pygame.math import Vector2, Vector3
 from physics_objects import Circle, Elevator, Polygon,Spinner
 from contact import generate_contact, resolve_contact, resolve_contact_bumper
@@ -6,15 +7,19 @@ from forces import Gravity
 import math
 import random
 from tipy import file_to_level
-
+from level_gen import bg_anim_setup, fg_anim_setup
 
 # initialize pygame and open window
+# Center the window
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
-width, height = 800, 700
+width, height = 1600, 700 #
+# Original width/height - 800/600 (700 with HUD)
 window = pygame.display.set_mode([width, height])
 center = Vector2(width/2, height/2)
 diagonal = math.sqrt(width**2 + height**2)
-BU = width/30
+#BU = width/30 Original Width
+BU = 26.66667
 
 # set timing stuff
 fps = 60
@@ -87,131 +92,7 @@ level_info_list = [
     ("Death", 100, 3, "Purple")        
    ]
 
-def create_poly_sqr(pos, size, color, vel, avel):  
-  return Polygon(pos=pos, offsets=[(-size, -size),(-1*size,size),(size,size),(size,-1*size)], color=color, vel=vel, avel=avel)
-
-def create_non_com_sqr(pos, size, color, vel, avel):  
-  return Polygon(pos=pos, offsets=[(0, 0),(0, -2 * size),(2*size,-2*size),(2*size,0)], color=color, vel=vel, avel=avel)
-
-def create_poly_rect(pos, s_length, s_height, color, vel, avel):  
-  return Polygon(pos=pos, offsets=[(-s_length, -s_height), (-s_length, s_height),(s_length, s_height), (s_length, -s_height)], color=color, vel=vel, avel=avel)
-
-# Notes: Color1 is the outline color
-def create_spiked_mine(pos, speed, avel, outer_rad, mid_size, inner_rad, color1, color2, color3):  
-  bg_objects.append(Circle(pos=pos, vel=speed, radius=outer_rad, color=color1))
-  bg_objects.append(Circle(pos=pos, vel=speed, radius=outer_rad-2, color=color2))              
-  bg_objects.append(create_poly_sqr(pos, mid_size, color2, speed, avel=-avel))
-  bg_objects.append(create_poly_sqr(pos, mid_size-(mid_size*.04), color3, speed, avel=avel))    
-  bg_objects.append(Circle(pos=pos, vel=speed, radius=inner_rad, color=color1))
-  bg_objects.append(Circle(pos=pos, vel=speed, radius=inner_rad-(inner_rad*.04), color=color2))
-
-def create_box_circle(pos, speed, avel, box_size, circle_rad, color1, color2, color3):
-  bg_objects.append(create_poly_sqr(pos, box_size, color1, speed, avel=avel))
-  bg_objects.append(create_poly_sqr(pos, box_size-(box_size *.04), color3, speed, avel=avel))    
-  bg_objects.append(Circle(pos=pos, vel=speed, radius=circle_rad, color=color1))
-  bg_objects.append(Circle(pos=pos, vel=speed, radius=circle_rad-(circle_rad*.04), color=color2))
-
-# Contains no animated objects, or objects that use functions to directly add them to the array
-def create_template_background(speed, preset):  
-  randomTemp = (random.randint(100, 700),random.randint(50,500))
-  test_obj_arr = []
-  if preset == 1:
-    test_obj_arr = [
-        (Circle(pos=(width/4,100), vel=(speed,0), radius=12, color=[0,0,0])),
-        (Circle(pos=(width/4,100), vel=(speed,0), radius=10, color=[170,170,255])),
-        (create_poly_sqr(randomTemp, 11, [0,0,0], (speed/3,0), avel=5)),
-        (create_poly_sqr(randomTemp, 10, [255,165,0], (speed/3,0), avel=5)),  
-        (Circle(pos=(width/6,height/1.5), vel=(speed/3,0), radius=22, color=[0,0,0])),
-        (Circle(pos=(width/6,height/1.5), vel=(speed/3,0), radius=20, color=[200,100,200])),               
-        (Circle(pos=(width/2,height/3), vel=(speed,speed/3), radius=22, color=[0,0,0])),
-        (Circle(pos=(width/2,height/3), vel=(speed,speed/3), radius=20, color=[random.randint(100,255),100,200]))
-        ]
-  elif preset == 2:
-    test_obj_arr = [
-      (create_non_com_sqr((width/2,height/2-50), -250, [0, 55, 55], (0, 0), avel=.5)),            
-      (Circle(pos=(width/2,height/2-50), vel=(0,0), radius=355, color=[0, 75, 75])),
-      (create_poly_sqr((width/2,height/2-50), 250, [0, 55, 55], (0, 0), avel=.05)), 
-      (create_poly_sqr((width/2,height/2-50), 200, [0, 75, 75], (0, 0), avel=.05)), 
-      (create_poly_sqr((width/2,height/2-50), 150, [0, 95, 95], (0, 0), avel=.05)),
-      (create_poly_sqr((width/2,height/2-50), 100, [0, 115, 115], (0, 0), avel=.05)),  
-      (create_poly_sqr((width/2,height/2-50), 50, [0, 135, 135], (0, 0), avel=.05)),        
-    ]
-  elif preset == 3:
-    test_obj_arr = [            
-      (create_poly_sqr((width/2,height/2-50), 120, [0, 35, 35], (0, 0), avel=.1 )), 
-      (create_poly_sqr((width/2,height/2-50), 100, [0, 55, 55], (0, 0), avel=.1)), 
-      (create_poly_sqr((width/2,height/2-50), 80, [0, 75, 75], (0, 0), avel=.1)), 
-      (create_poly_sqr((width/2,height/2-50), 60, [0, 95, 95], (0, 0), avel=.1)),
-      (create_poly_sqr((width/2,height/2-50), 40, [0, 115, 115], (0, 0), avel=.1)),  
-      (create_poly_sqr((width/2,height/2-50), 20, [0, 135, 135], (0, 0), avel=.1)),            
-    ]
-
-  elif preset == 4 or preset == 5:
-    test_obj_arr = [
-      (create_non_com_sqr((width/2,height/2-50), -250, [55, 0, 0], (0, 0), avel=1)),
-      (create_non_com_sqr((width/2,height/2-50), 250, [55, 0, 0], (0, 0), avel=1)),            
-      (Circle(pos=(width/2,height/2-50), vel=(0,0), radius=355, color=[75, 0, 0])),
-      (create_poly_sqr((width/2,height/2-50), 250, [55, 0, 0], (0, 0), avel=.05)), 
-      (create_poly_sqr((width/2,height/2-50), 200, [75, 0, 0], (0, 0), avel=.05)), 
-      (create_poly_sqr((width/2,height/2-50), 150, [95, 0, 0], (0, 0), avel=.05)),
-      (create_poly_sqr((width/2,height/2-50), 100, [115, 0, 0], (0, 0), avel=.05)),  
-      (create_poly_sqr((width/2,height/2-50), 50, [135, 0, 0], (0, 0), avel=.05)),        
-    ]
-  return test_obj_arr  
-
-# region
-def bg_anim_setup(speed, preset):
-  global bg_objects
-  # preset 1: Comets
-  if preset == 1:  
-    bg_objects.append(Circle(pos=(width/4,100), vel=(speed,0), radius=12, color=[0,0,0]))
-    bg_objects.append(Circle(pos=(width/4,100), vel=(speed,0), radius=10, color=[170,170,255]))
-    
-    randomTemp = (random.randint(100, 700),random.randint(50,500))
-    bg_objects.append(create_poly_sqr(randomTemp, 11, [0,0,0], (speed/3,0), avel=5))
-    bg_objects.append(create_poly_sqr(randomTemp, 10, [255,165,0], (speed/3,0), avel=5))  
-  
-    bg_objects.append(Circle(pos=(width/6,height/1.5), vel=(speed/3,0), radius=22, color=[0,0,0]))
-    bg_objects.append(Circle(pos=(width/6,height/1.5), vel=(speed/3,0), radius=20, color=[200,100,200]))            
-               
-    bg_objects.append(Circle(pos=(width/2,height/3), vel=(speed,speed/3), radius=22, color=[0,0,0]))
-    bg_objects.append(Circle(pos=(width/2,height/3), vel=(speed,speed/3), radius=20, color=[random.randint(100,255),100,200]))
-
-    create_spiked_mine((200,320), (speed, speed), 3, 25, 20, 20, [255,255,255], [0,0,0], [200,0,0])
-    create_spiked_mine((300,220), (speed, speed), 3, 25, 20, 20, [255,255,255], [0,0,0], [200,0,0])
-    create_spiked_mine((400,120), (speed, speed), 3, 25, 20, 20, [255,255,255], [0,0,0], [200,0,0])
-    create_spiked_mine((600,20), (speed, speed), 3, 25, 20, 20, [255,255,255], [0,0,0], [200,0,0])
-    
-    # Append any animated background elements after static ones    
-    bg_objects_anim.append(Circle(pos=(200,320), vel=(speed, speed), radius=14, color=[0,0,0]))       
-    bg_objects_anim.append(Circle(pos=(300,220), vel=(speed,speed), radius=14, color=[0,0,0]))
-    bg_objects_anim.append(Circle(pos=(400,120), vel=(speed, speed), radius=14, color=[0,0,0]))       
-    bg_objects_anim.append(Circle(pos=(600,20), vel=(speed,speed), radius=14, color=[0,0,0]))           
-  elif preset == 2:    
-    bg_objects = create_template_background(speed, preset)    
-    bg_objects_anim.append((create_poly_sqr((width/2,height/2-50), 25, [0, 0,0], (0, 0), avel=.05))) 
-  elif preset == 3:
-    bg_objects = create_template_background(speed, preset)   
-  elif preset == 4:
-    bg_objects = create_template_background(speed, preset)    
-    bg_objects_anim.append((create_poly_sqr((width/2,height/2-50), 25, [0, 0,0], (0, 0), avel=.05)))
-    bg_objects.append((create_non_com_sqr((0,height/2-50), 150, [255,255,220], (0, 0), avel=0)))
-    bg_objects.append((create_non_com_sqr((0,height/2-50), 140, [255, 200, 200], (0, 0), avel=0)))
-    bg_objects.append((create_non_com_sqr((0,height-100), 150, [255,255,220], (0, 0), avel=0)))
-    bg_objects.append((create_non_com_sqr((0,height-100), 140, [255,200,200], (0, 0), avel=0)))
-
-  elif preset == 5:
-    bg_objects = create_template_background(speed, preset)
-
-def fg_anim_setup(levelexitpos):
-  fg_objects.append((create_poly_sqr((levelexitpos), 23, [255,255,255], (0, 0), avel=0)))
-
-  fg_objects.append((create_poly_sqr((levelexitpos), 15, [0,0,0], (0, 0), avel=2.5)))
-  fg_objects.append((create_poly_sqr((levelexitpos), 15 * .9, [255,255,255], (0, 0), avel=2.5)))
-
-  fg_objects.append((create_poly_sqr((levelexitpos), 7, [0,0,0], (0, 0), avel=-5)))
-  fg_objects.append((create_poly_sqr((levelexitpos), 7 * .9, [255,255,255], (0, 0), avel=-5)))
-
+## Start of background generation
 def setup_level_info(lv_info_index, levelexitpos):
   global bg_objects, bg_objects_anim, lv_name, lv_number, bg_color, fg_objects
   bg_objects = []
@@ -219,10 +100,9 @@ def setup_level_info(lv_info_index, levelexitpos):
   fg_objects = []
   lv_number = lv_info_index + 1
   lv_name = level_info_list[lv_info_index][0]
-  bg_anim_setup(level_info_list[lv_info_index][1], level_info_list[lv_info_index][2])
-  fg_anim_setup(levelexitpos)
+  bg_objects = bg_anim_setup(level_info_list[lv_info_index][1], level_info_list[lv_info_index][2])
+  fg_objects = fg_anim_setup(levelexitpos)
   bg_color = level_info_list[lv_info_index][3]  
-
 
 #Main level object. Translates the dict from file_to_level into usable arrays for the main game loop.
 def lv(index): 
@@ -276,9 +156,6 @@ def rotate_check():
    g = lv.checkpoints.index(lv.last_check)
    lv.last_check = lv.checkpoints[(g+1)%len(lv.checkpoints)]
  
-
-
-
 def win_screen():
    while True:
       for event in pygame.event.get():
@@ -378,31 +255,20 @@ def bg_obj_change_test():
     if i >= test_count:
       bg_objects[i].color = bg_og_colors[i]
 
-  
 def bg_color_check(time, str_toggle):
-  if(str_toggle):
-    if bg_color == "Purple":      
-      return [255, 135+(time), 255]
-    elif bg_color == "Yellow":
-      return [255, 255, 135+(time)]
-    elif bg_color == "Red":
-      return [255, 135+(time), 135+(time)]
-    elif bg_color == "Black":
-      return [time,time,time]
-    elif bg_color == "Dark Blue":
-      return [135+(time), 135+(time), 255]
-
-  if bg_color == "Purple":
-    return [255, 195+(time/2), 255]
-  elif bg_color == "Yellow":
-    return [255, 255, 195+(time/2)]
-  elif bg_color == "Red":
-    return [255, 195+(time/2), 195+(time/2)]
-  elif bg_color == "Black":
-    return [time/2, time/2, time/2]
-  elif bg_color == "Dark Blue":
-    return [195+(time/2), 195+(time/2), 255]
-
+  time_adj = 195+(time/2)
+  if str_toggle:
+    time_adj = 135+time
+  
+  bg_colors = {
+    'Purple' : [255, time_adj, 255],
+    'Yellow' : [255, 225, time_adj],
+    'Red' : [255, time_adj, time_adj],
+    'Black' : [time, time, time],
+    'Dark Blue' : [time_adj, time_adj, 255]
+  }
+  return bg_colors[bg_color]
+  
 while running:
     # EVENT loop
     for event in pygame.event.get():
@@ -542,7 +408,7 @@ while running:
     # Color changing box
     pygame.draw.rect(window, bg_color_check(time, True), pygame.Rect((boxspacer, (height-box_height_offset)+boxspacer), (width-2*boxspacer, box_height_offset-2*boxspacer))) # Inner box          
     pygame.draw.rect(window, [200, 200, 200], pygame.Rect((boxspacer*2, (height-box_height_offset)+boxspacer*2), (width-4*boxspacer, box_height_offset-4*boxspacer)))
-        
+    
     # Display text for the bottom display    
     ## Draw Text
     attempts_left_text = font.render(f"LIVES: {lives}", True, [0,0,0])

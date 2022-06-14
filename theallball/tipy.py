@@ -8,9 +8,9 @@ import pygame
 import math
 
 
-
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
-width, height = 800, 600
+width, height = 1600, 700
 window = pygame.display.set_mode([width, height])
 fps = 60
 dt = 1/fps
