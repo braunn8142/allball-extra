@@ -25,6 +25,7 @@
     - Display controls on screen with a prompt
 
 - Gameplay adjustments
+  * Rebind controls (E to reset at checkpoint)
   * Add more levels (main goal is 30)
   * Rework some block functionality
 

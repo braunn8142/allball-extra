@@ -10,7 +10,7 @@ import math
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
-width, height = 1600, 700
+width, height = 1600, 800
 window = pygame.display.set_mode([width, height])
 fps = 60
 dt = 1/fps
@@ -19,6 +19,11 @@ clock = pygame.time.Clock()
 bg_objects = []
 bg_objects_anim = []
 fg_objects = []
+
+color_def = {
+  'black' : [0,0,0],
+  'white' : [255, 255, 255]
+}
 
 ## Function definition
 # Formerly placed after the level_info_list in main
@@ -93,6 +98,44 @@ def create_template_background(speed, preset):
       (create_poly_sqr((width/2,height/2-50), 100, [115, 0, 0], (0, 0), avel=.05)),  
       (create_poly_sqr((width/2,height/2-50), 50, [135, 0, 0], (0, 0), avel=.05)),        
     ]
+
+  elif preset == 6:
+    # 1600, 800
+    layer1 = [
+      # Circle Group 1
+      (create_poly_sqr((width/2, height/2), 800, color=pygame.Color("#aed1f9"), vel=(0,0), avel=0)),
+    ]
+    layer2 = [
+
+      (Circle(pos=(width/4, 200), vel=(speed*2,speed*2), radius=40, color=color_def['black'])),
+      (Circle(pos=(width/4, 200), vel=(speed*2,speed*2), radius=36, color=pygame.Color("#f6c17e"))),
+      (Circle(pos=(width/2, 400), vel=(speed*2,speed*2), radius=40, color=color_def['black'])),
+      (Circle(pos=(width/2, 400), vel=(speed*2,speed*2), radius=36, color=pygame.Color("#f6c17e"))),
+      (Circle(pos=(width/1.3334, 600), vel=(speed*2,speed*2), radius=40, color=color_def['black'])),
+      (Circle(pos=(width/1.3334, 600), vel=(speed*2,speed*2), radius=36, color=pygame.Color("#f6c17e"))),
+
+      # Circle Group 2
+      (Circle(pos=(width/4, 600), vel=(speed*2,-speed*2), radius=40, color=color_def['black'])),
+      (Circle(pos=(width/4, 600), vel=(speed*2,-speed*2), radius=36, color=pygame.Color("#f9b0ae"))),
+      (Circle(pos=(width/2, 200), vel=(speed*2,-speed*2), radius=40, color=color_def['black'])),
+      (Circle(pos=(width/2, 200), vel=(speed*2,-speed*2), radius=36, color=pygame.Color("#f9b0ae"))),
+      (Circle(pos=(width/1.3334, 400), vel=(speed*2,-speed*2), radius=40, color=color_def['black'])),
+      (Circle(pos=(width/1.3334, 400), vel=(speed*2,-speed*2), radius=36, color=pygame.Color("#f9b0ae"))),
+
+      # Circle Group 3
+      (Circle(pos=(width/4, 400), vel=(-speed*2,-speed*2), radius=40, color=color_def['black'])),
+      (Circle(pos=(width/4, 400), vel=(-speed*2,-speed*2), radius=36, color=pygame.Color("#043e81"))),
+      (Circle(pos=(width/2, 600), vel=(-speed*2,-speed*2), radius=40, color=color_def['black'])),
+      (Circle(pos=(width/2, 600), vel=(-speed*2,-speed*2), radius=36, color=pygame.Color("#043e81"))),
+      (Circle(pos=(width/1.3334, 200), vel=(-speed*2,-speed*2), radius=40, color=color_def['black'])),
+      (Circle(pos=(width/1.3334, 200), vel=(-speed*2,-speed*2), radius=36, color=pygame.Color("#043e81"))),
+    ]
+
+    layer3 = [
+      (Circle(pos=(width/2, 100), vel=(0,0), radius=50, color=[255,0,0])),
+    ]
+
+    test_obj_arr = layer1 + layer2 + layer3
   return test_obj_arr
 
 ## Next two functions are exported
@@ -139,9 +182,13 @@ def bg_anim_setup(speed, preset):
 
   elif preset == 5:
     bg_objects = create_template_background(speed, preset)
+  
+  elif preset == 6:
+    bg_objects = create_template_background(speed, preset)
 
   return bg_objects
 
+# Currently, all this does is setup the level exit door
 def fg_anim_setup(levelexitpos):
   fg_objects = []
   fg_objects.append((create_poly_sqr((levelexitpos), 23, [255,255,255], (0, 0), avel=0)))

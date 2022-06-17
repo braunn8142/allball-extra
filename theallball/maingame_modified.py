@@ -13,8 +13,8 @@ from level_gen import bg_anim_setup, fg_anim_setup
 # Center the window
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
-width, height = 1600, 700 #
-# Original width/height - 800/600 (700 with HUD)
+width, height = 1600, 800 #
+# Original width/height - 800/700 with HUD)
 window = pygame.display.set_mode([width, height])
 center = Vector2(width/2, height/2)
 diagonal = math.sqrt(width**2 + height**2)
@@ -79,8 +79,10 @@ levels = [
   "platformer_level_test2.json",
   "platformer_level4.json",
   "platformer_level3.json",
-  "dead_level.json"]
+  "dead_level.json",
+  "platformer_level_empty.json"]
 
+# (level name, speed, bg_setup_preset, color)
 level_info_list = [
     ("Onward", 100, 0, "Purple"),
     ("Wall Kicks Will Work", 50, 1, "Red"),
@@ -89,7 +91,8 @@ level_info_list = [
     ("Water Plant", 100, 3, "Dark Blue"),
     ("Goodnight", 100, 4, "Red"),
     ("And Big Balls", 100, 5, "Black"),
-    ("Death", 100, 3, "Purple")        
+    ("Death", 100, 3, "Purple"),
+    ("Empty Test Level", 100, 6, "Yellow")        
    ]
 
 ## Start of background generation
@@ -126,7 +129,8 @@ def lv(index):
   setup_level_info(index, (lv.nextlvl.offsets[0] + lv.nextlvl.offsets[2])/2)
 # endregion
 
-lv(0)
+#Load the first default level
+lv(8)
 
 gravity = Gravity([0,980], objects_list=gravity_objects)
 
@@ -159,7 +163,7 @@ def rotate_check():
 def win_screen():
    while True:
       for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN:        
           if event.key == pygame.K_SPACE:
             lv(-1)
             lives = 30
@@ -168,8 +172,6 @@ def win_screen():
       draw_text_located(" Hey, I think you won. Press SPACE to play again. ",2,2)
       pygame.display.update()
       clock.tick(fps)
-
-
 
 def advance_lvl(c,r):
   if r:
@@ -219,8 +221,13 @@ def draw_update_obj(obj):
     obj.draw(window)
     if obj.pos.x > width + bg_object_ofscreen_offset:
       obj.pos.x = 0 - bg_object_ofscreen_offset
+    elif obj.pos.x < -bg_object_ofscreen_offset:
+      obj.pos.x = width + bg_object_ofscreen_offset
+
     if obj.pos.y > height + bg_object_ofscreen_offset:
       obj.pos.y = 0 - bg_object_ofscreen_offset
+    elif obj.pos.y < -bg_object_ofscreen_offset:
+      obj.pos.y = height + bg_object_ofscreen_offset
 
 def bg_anim_loop():           
   # Now set all of the moving objects
@@ -279,7 +286,7 @@ while running:
                 circle.avel = 30
             if event.key == pygame.K_LEFT:
                 circle.avel = -30
-            if event.key == pygame.K_DOWN:
+            if event.key == pygame.K_e:
               rotate_check()
               checkpoint_return()
         if event.type == pygame.KEYUP:
