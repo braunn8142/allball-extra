@@ -6,7 +6,7 @@ from contact import generate_contact, resolve_contact, resolve_contact_bumper
 from forces import Gravity
 import math
 import random
-from tipy import file_to_level
+from tipy import file_to_level, file_to_layer
 from level_gen import bg_anim_setup, fg_anim_setup
 
 # initialize pygame and open window
@@ -95,6 +95,25 @@ level_info_list = [
     ("Empty Test Level", 100, 6, "Yellow")        
    ]
 
+background_layers = [
+  "platformer_level_empty_extra.json"]
+
+def bgl(index):
+  h = file_to_layer(background_layers[index])
+  bgl.current_level = index
+  bgl.mobile = h['mobile']   
+  bgl.objects = h[''] + [circle] + h['gravitationals'] 
+  bgl.spikes = h['spikes']
+  bgl.bumpers = h['bumpers']
+  bgl.special = h['special']  
+  bgl.checkpoints = h['checkpoints']
+  bgl.adders = h['lifeadders']
+  bgl.gravitationals = h['gravitationals']
+  bgl.nextlvl = h['nextlvl'] or Circle()
+  bgl.elevators = h['elevators']
+  bgl.spinners = h['spinners']
+  bgl.all = bgl.checkpoints + bgl.adders + bgl.objects + bgl.spikes  + bgl.mobile + bgl.bumpers + bgl.special + bgl.gravitationals
+
 ## Start of background generation
 def setup_level_info(lv_info_index, levelexitpos):
   global bg_objects, bg_objects_anim, lv_name, lv_number, bg_color, fg_objects
@@ -105,7 +124,7 @@ def setup_level_info(lv_info_index, levelexitpos):
   lv_name = level_info_list[lv_info_index][0]
   bg_objects = bg_anim_setup(level_info_list[lv_info_index][1], level_info_list[lv_info_index][2])
   fg_objects = fg_anim_setup(levelexitpos)
-  bg_color = level_info_list[lv_info_index][3]  
+  bg_color = level_info_list[lv_info_index][3]
 
 #Main level object. Translates the dict from file_to_level into usable arrays for the main game loop.
 def lv(index): 
@@ -131,6 +150,7 @@ def lv(index):
 
 #Load the first default level
 lv(8)
+bgl(0)
 
 gravity = Gravity([0,980], objects_list=gravity_objects)
 
@@ -217,17 +237,17 @@ bg_circle = Circle(pos=(width/4,height/2), vel=(0,0), radius=20, color=[100,100,
 bg_circle2 = Circle(pos=(width/4,height/2), vel=(0,0), radius=22, color=[0,0,0])
 
 def draw_update_obj(obj):
-    obj.update(dt)
-    obj.draw(window)
-    if obj.pos.x > width + bg_object_ofscreen_offset:
-      obj.pos.x = 0 - bg_object_ofscreen_offset
-    elif obj.pos.x < -bg_object_ofscreen_offset:
-      obj.pos.x = width + bg_object_ofscreen_offset
+  obj.update(dt)
+  obj.draw(window)
+  if obj.pos.x > width + bg_object_ofscreen_offset:
+    obj.pos.x = 0 - bg_object_ofscreen_offset
+  elif obj.pos.x < -bg_object_ofscreen_offset:
+    obj.pos.x = width + bg_object_ofscreen_offset
 
-    if obj.pos.y > height + bg_object_ofscreen_offset:
-      obj.pos.y = 0 - bg_object_ofscreen_offset
-    elif obj.pos.y < -bg_object_ofscreen_offset:
-      obj.pos.y = height + bg_object_ofscreen_offset
+  if obj.pos.y > height + bg_object_ofscreen_offset:
+    obj.pos.y = 0 - bg_object_ofscreen_offset
+  elif obj.pos.y < -bg_object_ofscreen_offset:
+    obj.pos.y = height + bg_object_ofscreen_offset
 
 def bg_anim_loop():           
   # Now set all of the moving objects
@@ -316,10 +336,8 @@ while running:
   
     for s in lv.spinners:
       s.update(dt)
-
-
-        
-    # update objects
+            
+    # update objects        
     for o in lv.objects:
       o.update(dt)
       if o == circle:
@@ -404,10 +422,16 @@ while running:
       if o==circle:
         ddir = Vector2(o.radius).rotate_rad(o.angle)
         pygame.draw.line(window,[255,255,255],o.pos,o.pos + ddir)
-
+    
     # Now draw all FOREGROUND objects
     fg_anim_loop()
-   
+
+    # Draw any tiled layers
+    for o in bgl.objects:
+      o.update(dt)
+    for o in bgl.all:
+      o.draw(window)
+
     # Create a rectangle for the bottom display    
     boxspacer = 10
     box_height_offset = 100
@@ -425,8 +449,6 @@ while running:
     level_name_text = font_large.render(f"{lv_number}: {lv_name}", True, [0,0,0])    
     level_name_text_rect = level_name_text.get_rect(center = (width/2, height-(box_height_offset/2)))        
     window.blit(level_name_text, level_name_text_rect)
-    
-
 
     # update the display
     pygame.display.update()
