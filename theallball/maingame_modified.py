@@ -6,7 +6,7 @@ from contact import generate_contact, resolve_contact, resolve_contact_bumper
 from forces import Gravity
 import math
 import random
-from tipy import file_to_level, file_to_layer
+from tipy import file_to_level
 from level_gen import bg_anim_setup, fg_anim_setup
 
 # initialize pygame and open window
@@ -18,7 +18,7 @@ width, height = 1600, 800 #
 window = pygame.display.set_mode([width, height])
 center = Vector2(width/2, height/2)
 diagonal = math.sqrt(width**2 + height**2)
-#BU = width/30 Original Width
+#BU = width/30 Original Width = 800
 BU = 26.66667
 
 # set timing stuff
@@ -96,23 +96,10 @@ level_info_list = [
    ]
 
 background_layers = [
-  "platformer_level_empty_extra.json"]
+  "platformer_level_empty_extra.json",
+  "platformer_level_test2_fg_testing.json"]
 
-def bgl(index):
-  h = file_to_layer(background_layers[index])
-  bgl.current_level = index
-  bgl.mobile = h['mobile']   
-  bgl.objects = h[''] + [circle] + h['gravitationals'] 
-  bgl.spikes = h['spikes']
-  bgl.bumpers = h['bumpers']
-  bgl.special = h['special']  
-  bgl.checkpoints = h['checkpoints']
-  bgl.adders = h['lifeadders']
-  bgl.gravitationals = h['gravitationals']
-  bgl.nextlvl = h['nextlvl'] or Circle()
-  bgl.elevators = h['elevators']
-  bgl.spinners = h['spinners']
-  bgl.all = bgl.checkpoints + bgl.adders + bgl.objects + bgl.spikes  + bgl.mobile + bgl.bumpers + bgl.special + bgl.gravitationals
+
 
 ## Start of background generation
 def setup_level_info(lv_info_index, levelexitpos):
@@ -142,6 +129,7 @@ def lv(index):
   lv.last_check = lv.checkpoints[0]
   lv.elevators = t['elevators']
   lv.spinners = t['spinners']
+  lv.front = t['foreground']
   lv.all = lv.checkpoints + lv.adders + lv.objects + lv.spikes  + lv.mobile + lv.bumpers + lv.special + lv.gravitationals
   circle.pos = lv.last_check.pos.copy()
   # Level number (index), level exit position (middle of offset 0 and 3)
@@ -149,8 +137,7 @@ def lv(index):
 # endregion
 
 #Load the first default level
-lv(8)
-bgl(0)
+lv(4)
 
 gravity = Gravity([0,980], objects_list=gravity_objects)
 
@@ -426,10 +413,8 @@ while running:
     # Now draw all FOREGROUND objects
     fg_anim_loop()
 
-    # Draw any tiled layers
-    for o in bgl.objects:
-      o.update(dt)
-    for o in bgl.all:
+     # Draw any tiled layers    
+    for o in lv.front:
       o.draw(window)
 
     # Create a rectangle for the bottom display    
