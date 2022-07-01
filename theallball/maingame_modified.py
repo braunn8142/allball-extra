@@ -129,8 +129,11 @@ def lv(index):
   lv.nextlvl = t['nextlvl'] or Circle()
   lv.last_check = lv.checkpoints[0]
   lv.elevators = t['elevators']
-  lv.spinners = t['spinners']
-  lv.front = t['foreground']
+  lv.spinners = t['spinners']  
+  lv.windows = t['windows']
+  # front contains all foreground objects
+  # all contains all non-foreground objects
+  lv.front = t['foreground'] + t['windows']  
   lv.all = lv.checkpoints + lv.adders + lv.objects + lv.spikes  + lv.mobile + lv.bumpers + lv.special + lv.gravitationals
   circle.pos = lv.last_check.pos.copy()
   # Level number (index), level exit position (middle of offset 0 and 3)
@@ -248,6 +251,8 @@ def bg_anim_loop():
     obj.color = (255, 120-(time2), 120-(time2))    
     draw_update_obj(obj)
 
+
+# TODO Rewrite/Remove this redundant function
 def fg_anim_loop():
   # Update and draw of the foreground objects
   for obj in fg_objects:
@@ -417,8 +422,13 @@ while running:
     # Now draw all FOREGROUND objects
     fg_anim_loop()
 
-     # Draw any tiled layers    
-    for o in lv.front:
+    # Draw tiled layers
+    # Adjust tile groups before rendering them
+    for o in lv.windows:
+      o.color = curr_bg_color
+    
+    for o in lv.front:      
+      o.update(dt)
       o.draw(window)
 
     # Create a rectangle for the bottom display    

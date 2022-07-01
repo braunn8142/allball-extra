@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+from turtle import color
 
 
 from physics_objects import Polygon,Circle,UniformCircle,UniformPolygon,world_poly,world_rect,to_uniform,Elevator,Spinner
@@ -31,7 +32,8 @@ def file_to_level(fname):
     'elevators': [],
     'spinners' : [],
     'nextlvl' : None,
-    'foreground': []
+    'foreground': [],
+    'windows': [],
   }
 
   #Dict that relates a numerical ID to a world object.
@@ -59,8 +61,8 @@ def file_to_level(fname):
     'bumpers' : pygame.Color("#f8e0b5"),
     'special' : pygame.Color("#e48f77"),
     'gravitationals' : pygame.Color("#ba96c5"),    
-    'special_alt' : pygame.Color('#f8e0b5')
-
+    'special_alt' : pygame.Color('#f8e0b5'),
+    'windows' : pygame.Color('#444444')
   }
 
   #This function finds out where a generated object goes depending on its properties, and also modifies it if necessary.
@@ -74,7 +76,10 @@ def file_to_level(fname):
 
     if o['type'] == "gravitationals":
       r.flipped = False
-    
+
+    if o['type'] == "windows":
+      r.windows = True
+
     if 'properties' in o:
       prop = dict([(p['name'],p['value']) for p in o['properties']])
       if 'flipped' in prop.keys():
@@ -98,7 +103,6 @@ def file_to_level(fname):
       r.color = colors['next']
       leveldata['nextlvl'] = r
       return False
-
     return False
 
 
@@ -128,7 +132,11 @@ def file_to_level(fname):
                 r.mass = math.inf
             if check_door(o,r):
               continue
-            leveldata['foreground'].append(r)
+            
+            if r.color == pygame.Color('#444444'):
+              leveldata['windows'].append(r)
+            else:
+              leveldata['foreground'].append(r)
             continue
           x = o['x']
           y = o['y']
