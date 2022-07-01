@@ -44,7 +44,8 @@ def draw_text_located(t,black_back=True,ldiv=2,tdiv=2):
 # set objects
 objects = [] 
 
-circle = Circle(pos=(width/4,height-2*BU), vel=(0,0), radius=0.6*BU, mass=1, color=[0,0,255], width=0)
+circle = Circle(pos=(width/4,height-2*BU), vel=(0,0), radius=0.6*BU, mass=1, color=[0,0,0], width=0)
+circleInner = Circle(pos=(circle.pos), vel=(0,0), radius=0.5*BU, mass=1, color=[0,0,255], width=0)
 
 coeff_of_friction = 0.9
 objects.append(circle)
@@ -409,6 +410,9 @@ while running:
       if o==circle:
         ddir = Vector2(o.radius).rotate_rad(o.angle)
         pygame.draw.line(window,[255,255,255],o.pos,o.pos + ddir)
+        circleInner.pos = circle.pos
+        circleInner.update(dt)
+        circleInner.draw(window)
     
     # Now draw all FOREGROUND objects
     fg_anim_loop()

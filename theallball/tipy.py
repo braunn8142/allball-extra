@@ -43,12 +43,24 @@ def file_to_level(fname):
     '' : [0,0,0],
     'bumpers' : [0,0,255],
     'special' : pygame.Color("#5c2414"),
+    'special_alt' : pygame.Color('#ffa500'),
     'gravitationals' : pygame.Color("#712B75"),
     'gravitationals_flipped': pygame.Color("#006400"),
     'spikes' : [255,0,0],
     'door' : pygame.Color("#D49B54"),
     'next' : pygame.Color("#000000")
     # fdff00
+  }
+
+  # List of the inner-box (foreground) colors for each object type
+  # Not called by any funciton. Just placeholder 
+  colorsFront = {
+    '': ["#FFFFFF"],
+    'bumpers' : pygame.Color("#f8e0b5"),
+    'special' : pygame.Color("#e48f77"),
+    'gravitationals' : pygame.Color("#ba96c5"),    
+    'special_alt' : pygame.Color('#f8e0b5')
+
   }
 
   #This function finds out where a generated object goes depending on its properties, and also modifies it if necessary.
