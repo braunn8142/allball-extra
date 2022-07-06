@@ -6,7 +6,7 @@ from contact import generate_contact, resolve_contact, resolve_contact_bumper
 from forces import Gravity
 import math
 import random
-from tipy import file_to_level
+from tipy import file_to_level, file_to_background
 from level_gen import bg_anim_setup, fg_anim_setup
 
 # initialize pygame and open window
@@ -81,7 +81,7 @@ levels = [
   "platformer_level4.json",
   "platformer_level3.json",
   "dead_level.json",
-  "platformer_level_empty.json"]
+  "platformer_level_extra_1.json"]
 
 # (level name, speed, bg_setup_preset, color)
 level_info_list = [
@@ -93,14 +93,17 @@ level_info_list = [
     ("Goodnight", 100, 4, "Red"),
     ("And Big Balls", 100, 5, "Black"),
     ("Death", 100, 3, "Purple"),
-    ("Empty Test Level", 100, 6, "Yellow")        
+    ("Empty Test Level", 100, 0, "Yellow")        
    ]
+
+backgrounds = [
+  "platformer_background1.json",
+
+]
 
 background_layers = [
   "platformer_level_empty_extra.json",
   "platformer_level_test2_fg_testing.json"]
-
-
 
 ## Start of background generation
 def setup_level_info(lv_info_index, levelexitpos):
@@ -113,6 +116,12 @@ def setup_level_info(lv_info_index, levelexitpos):
   bg_objects = bg_anim_setup(level_info_list[lv_info_index][1], level_info_list[lv_info_index][2])
   fg_objects = fg_anim_setup(levelexitpos)
   bg_color = level_info_list[lv_info_index][3]
+
+def bglay(index):
+  k = file_to_background(backgrounds[index])
+  bglay.layer1 = k['layer1']
+  bglay.all = bglay.layer1
+
 
 #Main level object. Translates the dict from file_to_level into usable arrays for the main game loop.
 def lv(index): 
@@ -131,9 +140,10 @@ def lv(index):
   lv.elevators = t['elevators']
   lv.spinners = t['spinners']  
   lv.windows = t['windows']
+  lv.danger = t['danger']
   # front contains all foreground objects
   # all contains all non-foreground objects
-  lv.front = t['foreground'] + t['windows']  
+  lv.front = t['danger'] + t['foreground'] + t['windows']
   lv.all = lv.checkpoints + lv.adders + lv.objects + lv.spikes  + lv.mobile + lv.bumpers + lv.special + lv.gravitationals
   circle.pos = lv.last_check.pos.copy()
   # Level number (index), level exit position (middle of offset 0 and 3)
@@ -142,6 +152,7 @@ def lv(index):
 
 #Load the first default level
 lv(4)
+bglay(0)
 
 gravity = Gravity([0,980], objects_list=gravity_objects)
 
@@ -275,7 +286,8 @@ def bg_obj_change_test():
     if i >= test_count:
       bg_objects[i].color = bg_og_colors[i]
 
-def bg_color_check(time, str_toggle):
+# str toggle increases the darkness of that color. used to make the hud a darker variant of the bg color
+def get_curr_color(color_name, time, str_toggle):
   time_adj = 195+(time/2)
   if str_toggle:
     time_adj = 135+time
@@ -284,10 +296,12 @@ def bg_color_check(time, str_toggle):
     'Purple' : [255, time_adj, 255],
     'Yellow' : [255, 225, time_adj],
     'Red' : [255, time_adj, time_adj],
+    'DarkRed' : [105+time, 0, 0],
+    'SpikeRed' : [195+(time/4), 0, 0],
     'Black' : [time, time, time],
     'Dark Blue' : [time_adj, time_adj, 255]
   }
-  return bg_colors[bg_color]
+  return bg_colors[color_name]
   
 while running:
     # EVENT loop
@@ -391,16 +405,28 @@ while running:
     # DRAW section ------------------------
     # clear the screen
     window.fill([255,255,255])
-        
-    # Background color changing
+    
     background_anim_timer += (dt * 60)
     if background_anim_timer >= bg_anim_timer_length:
       background_anim_timer = 0
     time = abs(background_anim_timer - (bg_anim_timer_length/2))            
-    curr_bg_color = bg_color_check(time, False)
+    
+    time_adj = 195+(time/2)
+    bg_colors = {
+      'Purple' : [255, time_adj, 255],
+      'Yellow' : [255, 225, time_adj],
+      'Red' : [255, time_adj, time_adj],
+      'BrightRed' : [105+time, 0, 0],
+      'Black' : [time, time, time],
+      'Dark Blue' : [time_adj, time_adj, 255]
+    }
+
+    # Background color changing    
+    curr_bg_color = bg_colors[bg_color]
     window.fill(curr_bg_color) 
     
-    
+    brightred = [195+(time/4),50,50]
+
     # Background animation setup
     speed = 10      
     bg_anim_loop()
@@ -409,36 +435,47 @@ while running:
     if level_info_list[lv_number-1][2] == 3:
       bg_obj_change_test()
 
+    # draw the background
+    for o in bglay.all:
+      o.update(dt)
+      o.draw(window)
+
+
     #draw objects
     for o in lv.all:                         
       o.draw(window)
       if o==circle:
-        ddir = Vector2(o.radius).rotate_rad(o.angle)
-        pygame.draw.line(window,[255,255,255],o.pos,o.pos + ddir)
         circleInner.pos = circle.pos
         circleInner.update(dt)
         circleInner.draw(window)
+        ddir = Vector2(o.radius).rotate_rad(o.angle)        
+        pygame.draw.line(window,[255,255,255],o.pos,o.pos + ddir)
+        
     
     # Now draw all FOREGROUND objects
     fg_anim_loop()
 
     # Draw tiled layers
     # Adjust tile groups before rendering them
+    for o in lv.danger:
+      o.color = brightred      
+    
     for o in lv.windows:
       o.color = curr_bg_color
-    
+          
     for o in lv.front:      
       o.update(dt)
       o.draw(window)
 
+    ## Create the HUD elements
     # Create a rectangle for the bottom display    
     boxspacer = 10
     box_height_offset = 100
     pygame.draw.rect(window, [100,100,100], pygame.Rect((0, height-box_height_offset), (width, box_height_offset))) # Outer box
     # Color changing box
-    pygame.draw.rect(window, bg_color_check(time, True), pygame.Rect((boxspacer, (height-box_height_offset)+boxspacer), (width-2*boxspacer, box_height_offset-2*boxspacer))) # Inner box          
-    pygame.draw.rect(window, [200, 200, 200], pygame.Rect((boxspacer*2, (height-box_height_offset)+boxspacer*2), (width-4*boxspacer, box_height_offset-4*boxspacer)))
-    
+    pygame.draw.rect(window, get_curr_color(bg_color, time, True), pygame.Rect((boxspacer, (height-box_height_offset)+boxspacer), (width-2*boxspacer, box_height_offset-2*boxspacer))) # Inner box          
+    pygame.draw.rect(window, [200, 200, 200], pygame.Rect((boxspacer*2, (height-box_height_offset)+boxspacer*2), (width-4*boxspacer, box_height_offset-4*boxspacer)))  
+
     # Display text for the bottom display    
     ## Draw Text
     attempts_left_text = font.render(f"LIVES: {lives}", True, [0,0,0])
