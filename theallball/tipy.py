@@ -17,118 +17,118 @@ fps = 60
 dt = 1/fps
 clock = pygame.time.Clock()
 
-#Dict that represents the whole level, partitioned into arrays
-leveldata = {
-  '' : [],
-  'spikes' : [],
-  'bumpers' : [],
-  'special': [],
-  'checkpoints' : [],
-  'gravitationals' : [],
-  'lifeadders':[],
-  'mobile': [],
-  'elevators': [],
-  'spinners' : [],
-  'nextlvl' : None,
-  'foreground': [],
-  'windows': [],
-  'danger': [],
-}
-layerdata = {
-  '' : [],
-  'layer1' : []
-}
-#Dict that relates a numerical ID to a world object.
-id_poly = {
-
-}
-
-colors = {
-  '' : [0,0,0],
-  'bumpers' : [0,0,255],
-  'special' : pygame.Color("#5c2414"),
-  'special_alt' : pygame.Color('#ffa500'),
-  'gravitationals' : pygame.Color("#712B75"),
-  'gravitationals_flipped': pygame.Color("#006400"),
-  'spikes' : [255,0,0],
-  'door' : pygame.Color("#D49B54"),
-  'next' : pygame.Color("#000000"),
-  'windows' : pygame.Color("#444444"),
-  'danger' : pygame.Color('#555555')
-  # fdff00
-}
-
-# List of the inner-box (foreground) colors for each object type
-# Not called by any funciton. Just placeholder
-## Foreground types:
-# danger - flashes red, matches spikes color
-# windows - shows current animated background
-
-colorsFront = {
-  '': ["#FFFFFF"],
-  'bumpers' : pygame.Color("#f8e0b5"),
-  'special' : pygame.Color("#e48f77"),
-  'gravitationals' : pygame.Color("#ba96c5"),    
-  'special_alt' : pygame.Color('#f8e0b5'),
-  'windows' : pygame.Color('#444444'),
-  'danger' : pygame.Color('#555555')
-}
-
-#This function finds out where a generated object goes depending on its properties, and also modifies it if necessary.
-def check_door(o,r):
-  id_poly[o['id']] = r
-  # o['type'] checks the "Type" field in Tiled
-  if o['type'] == "special":
-    r.res = 0.2
-    r.fric  = 0.6
-  if o['type'] == "spikes":
-    r.spike = True
-
-  if o['type'] == "gravitationals":
-    r.flipped = False
-
-  if o['type'] == "windows":
-    r.windows = True
-    r.color = colorsFront['windows']
-  
-  if o['type'] == "danger":      
-    r.color = colorsFront['danger']
-
-  if 'properties' in o:
-    prop = dict([(p['name'],p['value']) for p in o['properties']])
-    if 'flipped' in prop.keys():
-      r.flipped = True
-      r.color = colors['gravitationals_flipped']
-    
-    if 'res' in prop.keys(): r.res = prop['res']
-    if 'fric' in prop.keys(): r.fric = prop['fric']
-    if 'color' in prop.keys(): r.color = pygame.Color(prop['color'])
-
-    if 'avel' in prop.keys():
-      r.avel = prop['avel']
-      return False
-    
-    if 'velx' in prop.keys():
-      if 'vely' in prop.keys():
-        r.vel = [prop['velx'], prop['vely']]
-        return False
-      return False
-    
-    if 'mass' in prop.keys():
-      for arr in leveldata.values():
-        if arr is list and r in arr:
-          arr.remove(r)
-      r.mass = prop['mass']
-      leveldata['mobile'].append(r)
-  if o['name'] == "next":
-    r.color = colors['next']
-    leveldata['nextlvl'] = r
-    return False    
-  return False
-    
-# lines 20 - 124 go at the start of this funciton
-
 def file_to_level(fname):  
+  #Dict that represents the whole level, partitioned into arrays
+  leveldata = {
+    '' : [],
+    'spikes' : [],
+    'bumpers' : [],
+    'special': [],
+    'checkpoints' : [],
+    'gravitationals' : [],
+    'lifeadders':[],
+    'mobile': [],
+    'elevators': [],
+    'spinners' : [],
+    'nextlvl' : None,
+    'foreground': [],
+    'windows': [],
+    'danger': [],
+  }
+
+  layerdata = {
+    '' : [],
+    'layer1' : []
+  }
+  #Dict that relates a numerical ID to a world object.
+  id_poly = {
+
+  }
+
+  colors = {
+    '' : [0,0,0],
+    'bumpers' : [0,0,255],
+    'special' : pygame.Color("#5c2414"),
+    'special_alt' : pygame.Color('#ffa500'),
+    'gravitationals' : pygame.Color("#712B75"),
+    'gravitationals_flipped': pygame.Color("#006400"),
+    'spikes' : [255,0,0],
+    'door' : pygame.Color("#D49B54"),
+    'next' : pygame.Color("#000000"),
+    'windows' : pygame.Color("#444444"),
+    'danger' : pygame.Color('#555555')
+    # fdff00
+  }
+
+  # List of the inner-box (foreground) colors for each object type
+  # Not called by any funciton. Just placeholder
+  ## Foreground types:
+  # danger - flashes red, matches spikes color
+  # windows - shows current animated background
+
+  colorsFront = {
+    '': ["#FFFFFF"],
+    'bumpers' : pygame.Color("#f8e0b5"),
+    'special' : pygame.Color("#e48f77"),
+    'gravitationals' : pygame.Color("#ba96c5"),    
+    'special_alt' : pygame.Color('#f8e0b5'),
+    'windows' : pygame.Color('#444444'),
+    'danger' : pygame.Color('#555555')
+  }
+
+  #This function finds out where a generated object goes depending on its properties, and also modifies it if necessary.
+  def check_door(o,r):
+    id_poly[o['id']] = r
+    # o['type'] checks the "Type" field in Tiled
+    if o['type'] == "special":
+      r.res = 0.2
+      r.fric  = 0.6
+    if o['type'] == "spikes":
+      r.spike = True
+
+    if o['type'] == "gravitationals":
+      r.flipped = False
+
+    if o['type'] == "windows":
+      r.windows = True
+      r.color = colorsFront['windows']
+    
+    if o['type'] == "danger":      
+      r.color = colorsFront['danger']
+
+    if 'properties' in o:
+      prop = dict([(p['name'],p['value']) for p in o['properties']])
+      if 'flipped' in prop.keys():
+        r.flipped = True
+        r.color = colors['gravitationals_flipped']
+      
+      if 'res' in prop.keys(): r.res = prop['res']
+      if 'fric' in prop.keys(): r.fric = prop['fric']
+      if 'color' in prop.keys(): r.color = pygame.Color(prop['color'])
+
+      if 'avel' in prop.keys():
+        r.avel = prop['avel']
+        return False
+      
+      if 'velx' in prop.keys():
+        if 'vely' in prop.keys():
+          r.vel = [prop['velx'], prop['vely']]
+          return False
+        return False
+      
+      if 'mass' in prop.keys():
+        for arr in leveldata.values():
+          if arr is list and r in arr:
+            arr.remove(r)
+        r.mass = prop['mass']
+        leveldata['mobile'].append(r)
+    if o['name'] == "next":
+      r.color = colors['next']
+      leveldata['nextlvl'] = r
+      return False    
+    return False
+      
+  # lines 20 - 124 go at the start of this funciton
   with open(fname,'r') as f:
     data = f.read()
     fulldata = json.loads(data)
@@ -236,23 +236,108 @@ def file_to_level(fname):
           leveldata['spinners'].append(e)
   return leveldata
 
-
 def file_to_background(fname):  
+  #Dict that represents the whole level, partitioned into arrays
+  layerdata = {
+    '' : [],
+    'layer1' : [],
+    'layer2' : [],
+    'layer3' : [],
+
+  }
+  #Dict that relates a numerical ID to a world object.
+  id_poly = {
+
+  }
+
+  colors = {
+    '' : [0,0,0],
+    'bumpers' : [0,0,255],
+    'special' : pygame.Color("#5c2414"),
+    'special_alt' : pygame.Color('#ffa500'),
+    'gravitationals' : pygame.Color("#712B75"),
+    'gravitationals_flipped': pygame.Color("#006400"),
+    'spikes' : [255,0,0],
+    'door' : pygame.Color("#D49B54"),
+    'next' : pygame.Color("#000000"),
+    'windows' : pygame.Color("#444444"),
+    'danger' : pygame.Color('#555555')
+    # fdff00
+  }
+
+  # List of the inner-box (foreground) colors for each object type
+  # Not called by any funciton. Just placeholder
+  ## Foreground types:
+  # danger - flashes red, matches spikes color
+  # windows - shows current animated background
+
+  colorsFront = {
+    '': ["#FFFFFF"],
+    'bumpers' : pygame.Color("#f8e0b5"),
+    'special' : pygame.Color("#e48f77"),
+    'gravitationals' : pygame.Color("#ba96c5"),    
+    'special_alt' : pygame.Color('#f8e0b5'),
+    'windows' : pygame.Color('#444444'),
+    'danger' : pygame.Color('#555555')
+  }
+
+  #This function finds out where a generated object goes depending on its properties, and also modifies it if necessary.
+  def check_door(o,r):
+    id_poly[o['id']] = r
+    # o['type'] checks the "Type" field in Tiled
+    if o['type'] == "special":
+      r.res = 0.2
+      r.fric  = 0.6
+    if o['type'] == "spikes":
+      r.spike = True
+
+    if o['type'] == "gravitationals":
+      r.flipped = False
+
+    if o['type'] == "windows":
+      r.windows = True
+      r.color = colorsFront['windows']
+    
+    if o['type'] == "danger":      
+      r.color = colorsFront['danger']
+
+    if 'properties' in o:
+      prop = dict([(p['name'],p['value']) for p in o['properties']])
+      if 'flipped' in prop.keys():
+        r.flipped = True
+        r.color = colors['gravitationals_flipped']
+      
+      if 'res' in prop.keys(): r.res = prop['res']
+      if 'fric' in prop.keys(): r.fric = prop['fric']
+      if 'color' in prop.keys(): r.color = pygame.Color(prop['color'])
+
+      if 'avel' in prop.keys():
+        r.avel = prop['avel']
+        return False
+      
+      if 'velx' in prop.keys():
+        if 'vely' in prop.keys():
+          r.vel = [prop['velx'], prop['vely']]
+          return False
+        return False
+
+  # Process each layer individually
   with open(fname,'r') as f:
     data = f.read()
     fulldata = json.loads(data)
     f.close()
     for q in fulldata['layers']:
-      if q['name'] == 'layer1':
-        for o in q['objects']:
+      
+        for o in q['objects']:      
           t = o['type']
+          b = o['name']
           if 'ellipse' in o:
             rad = o['width']/2
             pos2 = (o['x'] + rad,o['y'] + rad)
             r = Circle(radius= rad,pos=pos2,color=colors[t])
             if check_door(o,r):
               continue
-            layerdata['layer1'].append(r)
+            layerdata[q['name']].append(r)
             continue
           if 'polygon' in o:
             n_off = [(b['x'],b['y']) for b in o['polygon']]
@@ -261,8 +346,8 @@ def file_to_background(fname):
                 r = to_uniform(r)
                 r.mass = math.inf
             if check_door(o,r):
-              continue
-            layerdata['layer1'].append(r)
+              continue                                    
+            layerdata[q['name']].append(r)                        
             continue
           x = o['x']
           y = o['y']
@@ -274,7 +359,7 @@ def file_to_background(fname):
             r.mass = math.inf
           if check_door(o,r):
             continue
-          layerdata['layer1'].append(r)
+          layerdata[q['name']].append(r)
     return layerdata    
 
 os.chdir(sys.path[0])

@@ -120,7 +120,9 @@ def setup_level_info(lv_info_index, levelexitpos):
 def bglay(index):
   k = file_to_background(backgrounds[index])
   bglay.layer1 = k['layer1']
-  bglay.all = bglay.layer1
+  bglay.layer2 = k['layer2']
+  bglay.layer3 = k['layer3']
+  bglay.all = bglay.layer1 + bglay.layer2 + bglay.layer3
 
 
 #Main level object. Translates the dict from file_to_level into usable arrays for the main game loop.
@@ -151,8 +153,10 @@ def lv(index):
 # endregion
 
 #Load the first default level
-lv(4)
+lv(8)
 bglay(0)
+
+## TODO Figure out how to handle the backgrounds loading over each other too many times
 
 gravity = Gravity([0,980], objects_list=gravity_objects)
 

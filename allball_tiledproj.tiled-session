@@ -199,7 +199,7 @@
     "openFiles": [
     ],
     "project": "allball_tiledproj.tiled-project",
-    "property.type": "float",
+    "property.type": "string",
     "recentFiles": [
         "theallball/platformer_level_extra_empty.json",
         "theallball/platformer_level_extra_1.json",
