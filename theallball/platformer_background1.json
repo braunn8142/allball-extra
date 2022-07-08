@@ -21,7 +21,7 @@
                         {
                          "name":"velx",
                          "type":"float",
-                         "value":20
+                         "value":120
                         }, 
                         {
                          "name":"vely",
@@ -47,21 +47,170 @@
          "name":"layer2",
          "objects":[
                 {
-                 "height":145.333333333333,
-                 "id":8,
+                 "height":0,
+                 "id":16,
+                 "name":"",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":30,
+                         "y":0
+                        }, 
+                        {
+                         "x":30,
+                         "y":640
+                        }, 
+                        {
+                         "x":0,
+                         "y":640
+                        }],
+                 "properties":[
+                        {
+                         "name":"color",
+                         "type":"string",
+                         "value":"#999999"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":60,
+                 "y":0
+                }, 
+                {
+                 "height":0,
+                 "id":19,
+                 "name":"",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":0,
+                         "y":-40
+                        }, 
+                        {
+                         "x":1420,
+                         "y":-40
+                        }, 
+                        {
+                         "x":1420,
+                         "y":0
+                        }],
+                 "properties":[
+                        {
+                         "name":"color",
+                         "type":"string",
+                         "value":"#999999"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":90,
+                 "y":640
+                }, 
+                {
+                 "height":0,
+                 "id":18,
+                 "name":"",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":30,
+                         "y":0
+                        }, 
+                        {
+                         "x":30,
+                         "y":640
+                        }, 
+                        {
+                         "x":0,
+                         "y":640
+                        }],
+                 "properties":[
+                        {
+                         "name":"color",
+                         "type":"string",
+                         "value":"#999999"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":1510,
+                 "y":0
+                }, 
+                {
+                 "ellipse":true,
+                 "height":40,
+                 "id":23,
                  "name":"",
                  "properties":[
                         {
                          "name":"color",
                          "type":"string",
-                         "value":"#876543"
+                         "value":"#ffffff"
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":353.333333333333,
-                 "x":478.666666666667,
-                 "y":294.666666666666
+                 "width":40,
+                 "x":130,
+                 "y":500
+                }, 
+                {
+                 "height":0,
+                 "id":24,
+                 "name":"",
+                 "polygon":[
+                        {
+                         "x":0,
+                         "y":0
+                        }, 
+                        {
+                         "x":20,
+                         "y":-5
+                        }, 
+                        {
+                         "x":25,
+                         "y":0
+                        }, 
+                        {
+                         "x":20,
+                         "y":5
+                        }],
+                 "properties":[
+                        {
+                         "name":"avel",
+                         "type":"float",
+                         "value":4
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":150,
+                 "y":520
+                }, 
+                {
+                 "ellipse":true,
+                 "height":20,
+                 "id":25,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":20,
+                 "x":140,
+                 "y":510
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -75,22 +224,38 @@
          "name":"layer3",
          "objects":[
                 {
-                 "ellipse":true,
-                 "height":349.333333333333,
-                 "id":9,
+                 "height":0,
+                 "id":20,
                  "name":"",
+                 "polygon":[
+                        {
+                         "x":-5,
+                         "y":5
+                        }, 
+                        {
+                         "x":15,
+                         "y":5
+                        }, 
+                        {
+                         "x":15,
+                         "y":-625
+                        }, 
+                        {
+                         "x":-5,
+                         "y":-625
+                        }],
                  "properties":[
                         {
                          "name":"color",
                          "type":"string",
-                         "value":"#ffffff"
+                         "value":"#333333"
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":332,
-                 "x":680,
-                 "y":322.666666666667
+                 "width":0,
+                 "x":70,
+                 "y":630
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -99,7 +264,7 @@
          "y":0
         }],
  "nextlayerid":11,
- "nextobjectid":10,
+ "nextobjectid":26,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.8.4",

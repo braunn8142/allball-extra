@@ -316,9 +316,10 @@ def file_to_background(fname):
         return False
       
       if 'velx' in prop.keys():
-        if 'vely' in prop.keys():
-          r.vel = [prop['velx'], prop['vely']]
+        if 'vely' in prop.keys():          
+          r.vel = pygame.Vector2(prop['velx'], prop['vely'])
           return False
+        r.vel = pygame.Vector2(prop['velx'], 0)
         return False
 
   # Process each layer individually
@@ -326,8 +327,7 @@ def file_to_background(fname):
     data = f.read()
     fulldata = json.loads(data)
     f.close()
-    for q in fulldata['layers']:
-      
+    for q in fulldata['layers']:      
         for o in q['objects']:      
           t = o['type']
           b = o['name']

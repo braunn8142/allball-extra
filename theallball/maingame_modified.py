@@ -93,7 +93,7 @@ level_info_list = [
     ("Goodnight", 100, 4, "Red"),
     ("And Big Balls", 100, 5, "Black"),
     ("Death", 100, 3, "Purple"),
-    ("Empty Test Level", 100, 0, "Yellow")        
+    ("Empty Test Level", 100, 0, "Dark Blue")        
    ]
 
 backgrounds = [
@@ -244,7 +244,7 @@ bg_circle2 = Circle(pos=(width/4,height/2), vel=(0,0), radius=22, color=[0,0,0])
 
 def draw_update_obj(obj):
   obj.update(dt)
-  obj.draw(window)
+  obj.draw(window)  
   if obj.pos.x > width + bg_object_ofscreen_offset:
     obj.pos.x = 0 - bg_object_ofscreen_offset
   elif obj.pos.x < -bg_object_ofscreen_offset:
@@ -441,9 +441,7 @@ while running:
 
     # draw the background
     for o in bglay.all:
-      o.update(dt)
-      o.draw(window)
-
+      draw_update_obj(o)
 
     #draw objects
     for o in lv.all:                         

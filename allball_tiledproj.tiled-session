@@ -74,10 +74,18 @@
         },
         "theallball/platformer_background1.json": {
             "scale": 0.75,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 954,
+                "y": 313.33333333333337
+            }
+        },
+        "theallball/platformer_background_empty.json": {
+            "scale": 0.5,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 708,
-                "y": 494.6666666666666
+                "x": 566,
+                "y": 256
             }
         },
         "theallball/platformer_level2.json": {
@@ -137,11 +145,11 @@
             }
         },
         "theallball/platformer_level_extra_1.json": {
-            "scale": 2,
-            "selectedLayer": 1,
+            "scale": 0.75,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 251,
-                "y": 465
+                "x": 954,
+                "y": 400
             }
         },
         "theallball/platformer_level_extra_empty.json": {
@@ -201,6 +209,7 @@
     "project": "allball_tiledproj.tiled-project",
     "property.type": "string",
     "recentFiles": [
+        "theallball/platformer_background_empty.json",
         "theallball/platformer_level_extra_empty.json",
         "theallball/platformer_level_extra_1.json",
         "theallball/platformer_level3.json",
@@ -211,8 +220,7 @@
         "theallball/platformer_level_extra_test.json",
         "theallball/platformer_level_extra_test.tmj",
         "theallball/platformer_level4.json",
-        "theallball/platformer_level_test.json",
-        "theallball/platformer_level_empty.json"
+        "theallball/platformer_level_test.json"
     ],
     "resizeMap.removeObjects": false
 }

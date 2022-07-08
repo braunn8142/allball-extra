@@ -19,11 +19,6 @@
                          "value":"#555555"
                         }, 
                         {
-                         "name":"velx",
-                         "type":"float",
-                         "value":20
-                        }, 
-                        {
                          "name":"vely",
                          "type":"float",
                          "value":0
